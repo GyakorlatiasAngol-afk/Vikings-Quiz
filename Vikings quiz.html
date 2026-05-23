@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Vikings Saga Quiz - Deluxe Edition</title>
+<style>
+:root{
+  --gold:#facc15;
+  --goldSoft:#fde68a;
+  --amber:#d97706;
+  --red:#991b1b;
+  --green:#166534;
+  --panel:rgba(3,7,18,.84);
+  --text:#fff7ed;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#020202;color:white;overflow-x:hidden}
+body{
+  min-height:100vh;
+  min-height:100svh;
+  min-height:100dvh;
+  display:flex;
+  align-items:stretch;
+  justify-content:center;
+  padding:clamp(8px,2vw,18px);
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 50% -18%,rgba(250,204,21,.28),transparent 34%),
+    radial-gradient(circle at 14% 22%,rgba(217,119,6,.22),transparent 34%),
+    radial-gradient(circle at 85% 80%,rgba(120,53,15,.3),transparent 34%),
+    linear-gradient(145deg,#020202,#0f172a 45%,#1c1917 72%,#321b0b);
+  animation:bgPulse 18s ease-in-out infinite alternate;
+  z-index:-6;
+}
+@keyframes bgPulse{from{transform:scale(1)}to{transform:scale(1.05)}}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(90deg,rgba(0,0,0,.75),transparent 18%,transparent 82%,rgba(0,0,0,.75)),
+    radial-gradient(circle,transparent 48%,rgba(0,0,0,.62));
+  pointer-events:none;
+  z-index:-1;
+}
+.fog{
+  position:fixed;inset:-25%;
+  background:
+    radial-gradient(circle at 20% 65%,rgba(255,255,255,.09),transparent 20%),
+    radial-gradient(circle at 65% 35%,rgba(255,255,255,.07),transparent 24%),
+    radial-gradient(circle at 45% 85%,rgba(255,255,255,.05),transparent 26%);
+  filter:blur(22px);
+  animation:fogMove 28s linear infinite alternate;
+  z-index:-4;pointer-events:none;
+}
+@keyframes fogMove{from{transform:translate(-5%,2%)}to{transform:translate(7%,-3%)}}
+.snow{
+  position:fixed;inset:0;
+  background-image:
+    radial-gradient(white 1px,transparent 1px),
+    radial-gradient(white 1px,transparent 1px);
+  background-size:36px 36px,84px 84px;
+  background-position:0 0,20px 40px;
+  opacity:.16;
+  animation:snow 18s linear infinite;
+  z-index:-2;pointer-events:none;
+}
+@keyframes snow{from{background-position:0 -60px,20px -40px}to{background-position:80px 180px,120px 260px}}
+.app{
+  width:min(980px,100%);
+  min-height:calc(100svh - 16px);
+  min-height:calc(100dvh - 16px);
+  overflow-y:visible;
+  border:1px solid rgba(250,204,21,.58);
+  border-radius:34px;
+  padding:clamp(18px,4vw,38px);
+  background:linear-gradient(180deg,rgba(0,0,0,.72),rgba(3,7,18,.92));
+  box-shadow:0 35px 100px rgba(0,0,0,.78), inset 0 0 80px rgba(250,204,21,.045);
+  backdrop-filter:blur(15px);
+  position:relative;
+  overflow:hidden;
+}
+.app::before{
+  content:"ᚱ ᚨ ᚷ ᚾ ᚨ ᚱ   ᛚ ᚨ ᚷ ᛖ ᚱ ᛏ ᚺ ᚨ   ᛟ ᛞ ᛁ ᚾ   ᚡ ᚨ ᛚ ᚺ ᚨ ᛚ ᛚ ᚨ";
+  position:absolute;left:-80px;right:-80px;bottom:16px;
+  color:rgba(250,204,21,.075);
+  font-size:25px;letter-spacing:17px;white-space:nowrap;text-align:center;
+  pointer-events:none;
+}
+.screen{position:relative;z-index:2;animation:screenIn .55s ease both}
+@keyframes screenIn{from{opacity:0;transform:translateY(20px) scale(.985)}to{opacity:1;transform:none}}
+.center{min-height:calc(100svh - 90px);min-height:calc(100dvh - 90px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.rune{
+  font-size:82px;color:var(--gold);
+  text-shadow:0 0 32px rgba(250,204,21,.55);
+  animation:runePulse 1.25s ease-in-out infinite alternate;
+}
+@keyframes runePulse{from{opacity:.58;transform:scale(.94) rotate(-2deg)}to{opacity:1;transform:scale(1.08) rotate(2deg)}}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid rgba(250,204,21,.45);
+  background:rgba(0,0,0,.35);
+  color:var(--goldSoft);
+  border-radius:999px;
+  padding:9px 14px;
+  font-size:12px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  font-weight:800;
+}
+h1{
+  margin:16px 0 12px;
+  color:var(--gold);
+  font-size:clamp(40px,8vw,84px);
+  line-height:.95;
+  text-shadow:0 0 30px rgba(250,204,21,.34);
+}
+.subtitle{max-width:760px;color:#d6d3d1;font-size:clamp(16px,2.4vw,21px);line-height:1.55;margin:0 auto 28px}
+.controls{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+button{
+  border:0;
+  cursor:pointer;
+  font-weight:900;
+  -webkit-tap-highlight-color:transparent;
+}
+.primary,.secondary,.answer,.mini{
+  transition:transform .2s,background .2s,border-color .2s,opacity .2s,box-shadow .2s;
+}
+.primary,.secondary,.mini{
+  border-radius:17px;
+  padding:14px 18px;
+  font-size:15px;
+}
+.primary{
+  background:linear-gradient(135deg,#facc15,#d97706);
+  color:#111827;
+  box-shadow:0 12px 32px rgba(217,119,6,.28);
+}
+.secondary,.mini{
+  background:rgba(17,24,39,.86);
+  color:var(--gold);
+  border:1px solid rgba(250,204,21,.42);
+}
+.primary:active,.secondary:active,.mini:active,.answer:active{transform:scale(.98)}
+.optionRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.toggle{
+  user-select:none;
+  border:1px solid rgba(250,204,21,.35);
+  background:rgba(0,0,0,.28);
+  color:#e7e5e4;
+  border-radius:999px;
+  padding:10px 13px;
+  font-weight:800;
+  cursor:pointer;
+}
+.toggle.active{background:rgba(250,204,21,.18);color:var(--goldSoft);border-color:var(--gold)}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.pill{
+  border:1px solid rgba(250,204,21,.34);
+  background:rgba(0,0,0,.28);
+  color:#fde68a;
+  border-radius:999px;
+  padding:9px 12px;
+  font-weight:900;
+  font-size:13px;
+}
+.progressWrap{height:14px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.08);margin-bottom:22px}
+.progress{height:100%;width:0;background:linear-gradient(90deg,#78350f,#facc15,#fff7ad);transition:width .55s ease}
+.card{
+  border:1px solid rgba(250,204,21,.36);
+  border-radius:30px;
+  padding:clamp(18px,4vw,34px);
+  background:linear-gradient(180deg,rgba(3,7,18,.72),rgba(28,25,23,.84));
+  box-shadow:0 22px 70px rgba(0,0,0,.5);
+}
+.chapter{text-align:center;color:#fde68a;text-transform:uppercase;letter-spacing:2px;font-size:12px;margin-bottom:10px;font-weight:900}
+.icon{font-size:clamp(46px,9vw,72px);filter:drop-shadow(0 0 18px rgba(250,204,21,.28));text-align:center}
+.question{
+  color:var(--text);
+  font-size:clamp(22px,4.1vw,36px);
+  line-height:1.24;
+  margin:16px 0 24px;
+  font-weight:950;
+  text-align:center;
+}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.answer{
+  min-height:70px;
+  border:2px solid rgba(120,113,108,.65);
+  border-radius:20px;
+  background:rgba(17,24,39,.9);
+  color:white;
+  padding:17px;
+  font-size:clamp(15px,2.4vw,18px);
+  text-align:left;
+}
+.answer:hover{transform:translateY(-2px);border-color:rgba(250,204,21,.75);background:rgba(31,41,55,.96)}
+.letter{color:var(--gold);margin-right:9px}
+.correct{background:linear-gradient(135deg,#14532d,#15803d)!important;border-color:#86efac!important;box-shadow:0 0 22px rgba(34,197,94,.22)}
+.wrong{background:linear-gradient(135deg,#7f1d1d,#991b1b)!important;border-color:#fecaca!important;box-shadow:0 0 22px rgba(239,68,68,.22)}
+.dim{opacity:.48}
+.feedback{
+  margin-top:22px;
+  border:1px solid rgba(250,204,21,.38);
+  background:rgba(0,0,0,.42);
+  border-radius:22px;
+  padding:18px;
+  animation:screenIn .35s ease both;
+}
+.feedback h3{margin:0 0 10px;color:var(--gold);font-size:22px}
+.feedback p{margin:0;color:#e7e5e4;line-height:1.65}
+.sagaWord{
+  display:inline-block;
+  margin-bottom:12px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(250,204,21,.14);
+  border:1px solid rgba(250,204,21,.42);
+  color:#fde68a;
+  font-weight:900;
+  letter-spacing:.4px;
+}
+.factTitle{
+  color:#facc15;
+  font-weight:900;
+  margin-bottom:6px;
+}
+.nextRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:stretch;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+.timerWrap{height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin:14px 0}
+.timerBar{height:100%;background:linear-gradient(90deg,#22c55e,#facc15,#ef4444);transition:width .15s linear}
+.achievements{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:18px 0}
+.achievement{border:1px solid rgba(250,204,21,.35);background:rgba(0,0,0,.26);border-radius:999px;padding:8px 11px;color:#fde68a;font-weight:800;font-size:13px}
+.toast{
+  position:fixed;left:50%;top:22px;transform:translateX(-50%);
+  background:rgba(0,0,0,.82);
+  color:#fde68a;
+  border:1px solid rgba(250,204,21,.5);
+  border-radius:999px;
+  padding:11px 16px;
+  z-index:50;
+  box-shadow:0 10px 40px rgba(0,0,0,.5);
+  animation:toastIn 2.2s ease both;
+}
+@keyframes toastIn{0%{opacity:0;transform:translateX(-50%) translateY(-18px)}15%,80%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-12px)}}
+.final{max-width:760px;margin:auto;text-align:center}
+.rank{font-size:clamp(30px,6vw,54px);color:var(--gold);margin:10px 0;text-shadow:0 0 24px rgba(250,204,21,.3)}
+.statsGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}
+.stat{border:1px solid rgba(250,204,21,.27);background:rgba(0,0,0,.25);border-radius:18px;padding:14px}
+.stat b{display:block;color:var(--gold);font-size:24px;margin-bottom:4px}
+.shareBox{background:rgba(17,24,39,.85);border:1px solid rgba(250,204,21,.26);border-radius:18px;padding:14px;margin-top:16px;color:#e7e5e4;line-height:1.55}
+.torch{position:absolute;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(250,204,21,.22),transparent 63%);filter:blur(5px);animation:flicker .55s infinite alternate;pointer-events:none;z-index:1}
+.torch.left{left:-45px;top:90px}.torch.right{right:-45px;top:130px}
+@keyframes flicker{from{opacity:.42;transform:scale(.95)}to{opacity:.85;transform:scale(1.09)}}
+@media(max-width:720px){
+  body{
+    padding:0;
+    align-items:stretch;
+  }
+  .app{
+    width:100vw;
+    min-height:100svh;
+    min-height:100dvh;
+    border-radius:0;
+    border-left:0;
+    border-right:0;
+    padding:clamp(12px,4vw,18px);
+  }
+  .center{
+    min-height:calc(100svh - 36px);
+    min-height:calc(100dvh - 36px);
+  }
+  h1{font-size:clamp(34px,12vw,54px)}
+  .subtitle{font-size:clamp(14px,4vw,17px);margin-bottom:18px}
+  .card{padding:16px;border-radius:22px}
+  .answers{grid-template-columns:1fr;gap:10px}
+  .answer{min-height:auto;padding:12px 14px;font-size:15px;border-radius:16px}
+  .statsGrid{grid-template-columns:1fr}
+  .topbar{align-items:stretch;gap:8px}
+  .pill,.mini{flex:1;text-align:center;font-size:12px;padding:8px 9px}
+  .question{text-align:left;font-size:clamp(20px,6vw,27px);margin:14px 0 18px}
+  .icon{font-size:46px;text-align:left}
+  .feedback{padding:14px}
+  .nextRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:stretch;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+  .nextRow .primary,.nextRow .pill{width:100%;text-align:center}
+}
+</style>
+</head>
+<body>
+<div class="fog"></div>
+<div class="snow"></div>
+<main class="app">
+  <div class="torch left"></div>
+  <div class="torch right"></div>
+  <div id="app"></div>
+</main>
+
+<script>
+const bank = [
+ {q:"Who is the central character at the beginning of Vikings?", a:["Rollo","Ragnar Lothbrok","King Ecbert","Harald Finehair"], c:"Ragnar Lothbrok", icon:"⚔️", saga:"The Dreamer", fact:"Ragnar begins as a farmer with a dangerous dream: to sail west and discover richer lands."},
+ {q:"What is the name of Ragnar’s first wife?", a:["Aslaug","Helga","Lagertha","Judith"], c:"Lagertha", icon:"🛡️", saga:"Shield-Maiden", fact:"Lagertha is a legendary shield-maiden whose courage and leadership shape the story of Kattegat."},
+ {q:"Who builds Ragnar’s famous new ships?", a:["Floki","Athelstan","Bjorn","Ubbe"], c:"Floki", icon:"🚢", saga:"Shipwright", fact:"Floki’s boat-building skill allows Ragnar to cross dangerous seas and raid farther than others imagined."},
+ {q:"Which monastery is raided early in the series?", a:["Canterbury","Lindisfarne","Westminster","York"], c:"Lindisfarne", icon:"⛪", saga:"First Raid", fact:"The Lindisfarne raid is one of the series’ most important early moments and launches Ragnar’s legend."},
+ {q:"Which former monk becomes close to Ragnar?", a:["Heahmund","Alfred","Athelstan","Aelle"], c:"Athelstan", icon:"📜", saga:"The Captive Monk", fact:"Athelstan becomes a bridge between Viking and Christian worlds, deeply influencing Ragnar."},
+ {q:"What is the name of the Viking settlement at the heart of the series?", a:["Kattegat","Wessex","Mercia","Northumbria"], c:"Kattegat", icon:"🏔️", saga:"Home of Power", fact:"Kattegat grows from a small settlement into a powerful centre of Viking politics and ambition."},
+ {q:"Who is Ragnar’s brother?", a:["Harald","Rollo","Halfdan","Ivar"], c:"Rollo", icon:"🪓", saga:"Brother’s Shadow", fact:"Rollo’s love, jealousy, and ambition create one of the most complicated relationships in the show."},
+ {q:"Which English king has a complex friendship and rivalry with Ragnar?", a:["King Alfred","King Aelle","King Ecbert","King Charles"], c:"King Ecbert", icon:"♟️", saga:"The Saxon Strategist", fact:"Ecbert respects Ragnar’s mind, and their conversations are among the most thoughtful scenes in the series."},
+ {q:"Which son of Ragnar is known for his fierce intelligence and cruelty?", a:["Ubbe","Sigurd","Hvitserk","Ivar the Boneless"], c:"Ivar the Boneless", icon:"🐍", saga:"The Serpent Mind", fact:"Ivar turns physical weakness into psychological power and becomes a terrifying strategist."},
+ {q:"Who is Ragnar’s eldest son?", a:["Bjorn Ironside","Ivar","Ubbe","Hvitserk"], c:"Bjorn Ironside", icon:"🦁", saga:"The Young Lion", fact:"Bjorn grows from a young boy into a famous warrior and explorer in his own right."},
+ {q:"What is the Viking warrior afterlife called?", a:["Valhalla","Olympus","Camelot","Elysium"], c:"Valhalla", icon:"🔥", saga:"Hall of the Fallen", fact:"Valhalla is Odin’s hall, where brave warriors feast and prepare for the final battle."},
+ {q:"Who is Floki’s wife?", a:["Torvi","Helga","Gunnhild","Aslaug"], c:"Helga", icon:"💔", saga:"A Gentle Heart", fact:"Helga’s kindness and loyalty reveal a softer side of Floki’s strange and intense character."},
+ {q:"Who becomes Queen of Kattegat after Aslaug?", a:["Torvi","Judith","Lagertha","Gunnhild"], c:"Lagertha", icon:"👑", saga:"Queen of Kattegat", fact:"Lagertha’s return to power shows her strength as both warrior and ruler."},
+ {q:"Which Viking dreams of becoming King of all Norway?", a:["Harald Finehair","Athelstan","King Aelle","Bishop Heahmund"], c:"Harald Finehair", icon:"🦅", saga:"Crown Seeker", fact:"Harald’s ambition drives many alliances, betrayals, and battles throughout the later seasons."},
+ {q:"Which city do the Vikings famously attack in a major siege?", a:["Paris","Rome","Athens","Jerusalem"], c:"Paris", icon:"🏰", saga:"The Great Siege", fact:"The Paris storyline is one of the most cinematic parts of the series, full of strategy and spectacle."},
+ {q:"What is Ragnar often searching for beyond wealth and fame?", a:["A peaceful farm","New worlds and knowledge","A Roman crown","A magic sword"], c:"New worlds and knowledge", icon:"🌊", saga:"Beyond the Horizon", fact:"Ragnar is not only a raider; his curiosity about people, gods, and distant lands makes him unusual."},
+ {q:"Which Christian warrior-priest appears in the later seasons?", a:["Bishop Heahmund","King Horik","Jarl Borg","Halfdan"], c:"Bishop Heahmund", icon:"✝️", saga:"Warrior of Faith", fact:"Bishop Heahmund is a fierce fighter whose faith and violence make him a dramatic contrast to the Vikings."},
+ {q:"What does the raven often symbolise in Viking culture?", a:["Odin and fate","Peace treaties","English kings","Gold"], c:"Odin and fate", icon:"🖤", saga:"Raven Sign", fact:"Ravens are strongly linked with Odin, wisdom, battle, and destiny in Norse symbolism."},
+ {q:"Who is Aslaug?", a:["Ragnar’s second wife","Floki’s daughter","Ecbert’s sister","A Saxon queen"], c:"Ragnar’s second wife", icon:"🔮", saga:"The Seer’s Bloodline", fact:"Aslaug’s arrival changes Ragnar’s family and the future of his sons."},
+ {q:"Which son is usually the most interested in settlement and compromise?", a:["Ubbe","Ivar","Sigurd","Hvitserk"], c:"Ubbe", icon:"🌾", saga:"Builder of Peace", fact:"Ubbe often carries Ragnar’s curiosity and desire to build something lasting."}
+];
+
+let questions=[];
+let current=0, score=0, streak=0, bestStreak=0, wrong=0;
+let timerMode=false, hardMode=false, timer=null, timeLeft=20;
+let achievements=[];
+let audioCtx=null, master=null, musicOn=false, musicTimers=[];
+const app=document.getElementById("app");
+
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function toast(msg){
+  const t=document.createElement("div");
+  t.className="toast";
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2200);
+}
+
+function showStart(){
+  app.innerHTML=`
+  <section class="screen center">
+    <div class="rune">ᚱ</div>
+    <div class="badge">Deluxe Saga Edition</div>
+    <h1>Vikings Saga Quiz</h1>
+    
+    <div class="controls">
+      <button class="primary" onclick="startQuiz()">Begin the Saga</button>
+      <button class="secondary" onclick="toggleFullscreen()">📱 Fullscreen</button>
+      <button class="secondary" onclick="toggleMusic()">${musicOn ? "🎶 Music On" : "🎵 Start Music"}</button>
+    </div>
+    <div class="optionRow">
+      <div class="toggle ${timerMode?'active':''}" onclick="timerMode=!timerMode;showStart()">⏳ Timer Mode</div>
+      <div class="toggle ${hardMode?'active':''}" onclick="hardMode=!hardMode;showStart()">🔥 Hard Mode</div>
+    </div>
+    
+  </section>`;
+}
+
+function startQuiz(){
+  questions=shuffle(bank).slice(0,18).map(q=>({...q,a:shuffle(q.a)}));
+  current=0;score=0;streak=0;bestStreak=0;wrong=0;achievements=[];
+  if(!musicOn) toggleMusic();
+  renderQuestion();
+}
+
+function chapter(){
+  if(current<5) return "Chapter I — The Farmer’s Dream";
+  if(current<10) return "Chapter II — Blood and Sea";
+  if(current<14) return "Chapter III — Kings and Betrayal";
+  return "Chapter IV — Fate and Valhalla";
+}
+
+function rankName(){
+  const pct=score/Math.max(1,questions.length);
+  if(pct>=.95) return "🏆 Legend of Valhalla";
+  if(pct>=.82) return "👑 Jarl of Kattegat";
+  if(pct>=.65) return "⚔️ Fearless Raider";
+  if(pct>=.45) return "🛡️ Shield-Bearer";
+  return "🌾 New Raider";
+}
+
+function renderQuestion(){
+  clearInterval(timer);
+  const q=questions[current];
+  const progress=((current+1)/questions.length)*100;
+  app.innerHTML=`
+  <section class="screen">
+    <div class="topbar">
+      <div class="pill">Question ${current+1}/${questions.length}</div>
+      <div class="pill">Score ${score}</div>
+      <div class="pill">${q.saga || chapter()}</div>
+      <div class="pill">Streak ${streak}</div>
+      <button class="mini" onclick="toggleMusic()">${musicOn ? "🎶 Music On" : "🎵 Music"}</button>
+      <button class="mini" onclick="toggleFullscreen()">📱 Fullscreen</button>
+    </div>
+    <div class="progressWrap"><div class="progress" style="width:${progress}%"></div></div>
+    <div class="card">
+      <div class="chapter">${chapter()}</div>
+      <div class="icon">${q.icon}</div>
+      <div class="question">${q.q}</div>
+      ${timerMode?`<div class="timerWrap"><div id="timerBar" class="timerBar" style="width:100%"></div></div>`:""}
+      <div class="answers">
+        ${q.a.map((opt,i)=>`<button class="answer" onclick="chooseAnswer('${opt.replace(/'/g,"\\'")}', this)"><span class="letter">${String.fromCharCode(65+i)}.</span>${opt}</button>`).join("")}
+      </div>
+      <div id="feedback"></div>
+    </div>
+  </section>`;
+  if(timerMode) startTimer();
+}
+
+function startTimer(){
+  timeLeft=hardMode?12:20;
+  const max=timeLeft;
+  timer=setInterval(()=>{
+    timeLeft-=.15;
+    const bar=document.getElementById("timerBar");
+    if(bar) bar.style.width=Math.max(0,(timeLeft/max)*100)+"%";
+    if(timeLeft<=0){
+      clearInterval(timer);
+      chooseAnswer("__TIMEOUT__", null);
+    }
+  },150);
+}
+
+function unlock(name){
+  if(!achievements.includes(name)){
+    achievements.push(name);
+    toast("Achievement unlocked: "+name);
+  }
+}
+
+function chooseAnswer(opt, btn){
+  clearInterval(timer);
+  const q=questions[current];
+  const buttons=document.querySelectorAll(".answer");
+  buttons.forEach(b=>{
+    b.disabled=true;
+    const clean=b.innerText.replace(/^[A-D]\.\s*/,"");
+    if(clean===q.c)b.classList.add("correct");
+    else b.classList.add("dim");
+  });
+
+  const correct=opt===q.c;
+  if(correct){
+    score++;
+    streak++;
+    bestStreak=Math.max(bestStreak,streak);
+    if(btn){btn.classList.remove("dim");btn.classList.add("correct");}
+    playHorn();
+    if(streak===3) unlock("Three-Raid Streak");
+    if(streak===5) unlock("Berserker Focus");
+  }else{
+    wrong++;
+    streak=0;
+    if(btn){btn.classList.remove("dim");btn.classList.add("wrong");}
+    playDrumHit();
+    if(navigator.vibrate) navigator.vibrate(70);
+    if(hardMode){
+      setTimeout(()=>finish(true),700);
+      return;
+    }
+  }
+
+  document.getElementById("feedback").innerHTML=`
+    <div class="feedback" id="factBox">
+      <span class="sagaWord">${q.saga || "Saga Moment"}</span>
+      <h3>${correct ? "Victory — glory rises ⚔️" : opt==="__TIMEOUT__" ? "The moment passed — answer was "+q.c : "Defeat — the correct answer is "+q.c}</h3>
+      <div class="factTitle">Extra information</div>
+      <p>${q.fact}</p>
+      <div class="nextRow">
+        <button class="primary" onclick="nextQuestion()">${current+1===questions.length?"See Final Ranking":"Continue Saga"}</button>
+      </div>
+    </div>`;
+  setTimeout(()=>{
+    const box=document.getElementById("factBox");
+    if(box) box.scrollIntoView({behavior:"smooth", block:"nearest"});
+  },80);
+}
+
+function nextQuestion(){
+  current++;
+  if(current>=questions.length) finish(false);
+  else renderQuestion();
+}
+
+function finish(gameOver){
+  clearInterval(timer);
+  const total=questions.length||18;
+  const percent=Math.round((score/total)*100);
+  if(score===total) unlock("Perfect Saga");
+  if(wrong===0 && score>0) unlock("Untouched Shield");
+  if(timerMode) unlock("Against the Clock");
+  const title=gameOver ? "🔥 Saga Ended" : "🏆 Saga Complete";
+  const rank=gameOver ? "Hard Mode Defeat" : rankName();
+  const shareText=`I scored ${score}/${total} in the Vikings Saga Quiz and earned: ${rank}`;
+  app.innerHTML=`
+  <section class="screen center">
+    <div class="final">
+      <div class="rune">${gameOver ? "ᛉ" : "ᚱ"}</div>
+      <div class="badge">Final Ranking</div>
+      <h1>${title}</h1>
+      <div class="rank">${rank}</div>
+      <p class="subtitle">${gameOver ? "In Hard Mode, one wrong answer ends the raid. Return stronger." : "Your saga has been written in the halls of memory."}</p>
+      <div class="statsGrid">
+        <div class="stat"><b>${score}/${total}</b>Score</div>
+        <div class="stat"><b>${percent}%</b>Accuracy</div>
+        <div class="stat"><b>${bestStreak}</b>Best streak</div>
+      </div>
+      <div class="achievements">${achievements.length?achievements.map(a=>`<span class="achievement">${a}</span>`).join(""):"<span class='achievement'>No achievements yet — raid again!</span>"}</div>
+      <div class="controls">
+        <button class="primary" onclick="startQuiz()">Play Again</button>
+        <button class="secondary" onclick="copyScore('${shareText.replace(/'/g,"\\'")}')">Copy Score</button>
+        <button class="secondary" onclick="toggleFullscreen()">Fullscreen</button>
+      </div>
+      <div class="shareBox">${shareText}</div>
+    </div>
+  </section>`;
+}
+
+function copyScore(text){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text);
+    toast("Score copied");
+  }else{
+    toast("Copy not available on this browser");
+  }
+}
+
+function toggleFullscreen(){
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+}
+
+/* More realistic generated Viking-style audio.
+   Deep drones, frame drums, horn calls, bone clicks and chant-like harmonics.
+   No copyrighted audio or external files. */
+function initAudio(){
+  if(audioCtx) return;
+  audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  master=audioCtx.createGain();
+  master.gain.value=.38;
+  const low=audioCtx.createBiquadFilter();
+  low.type="lowpass";
+  low.frequency.value=1700;
+  const comp=audioCtx.createDynamicsCompressor();
+  master.connect(low); low.connect(comp); comp.connect(audioCtx.destination);
+}
+
+function env(volume,attack,release,duration,delay=0){
+  const t=audioCtx.currentTime+delay;
+  const g=audioCtx.createGain();
+  g.gain.setValueAtTime(.0001,t);
+  g.gain.exponentialRampToValueAtTime(volume,t+attack);
+  g.gain.exponentialRampToValueAtTime(.0001,t+duration+release);
+  return {g,t};
+}
+
+function tone(freq,dur,type="sawtooth",volume=.05,delay=0,detune=0){
+  if(!audioCtx||!musicOn)return;
+  const e=env(volume,.18,.5,dur,delay);
+  const o=audioCtx.createOscillator();
+  o.type=type;o.frequency.setValueAtTime(freq,e.t);o.detune.value=detune;
+  o.connect(e.g);e.g.connect(master);
+  o.start(e.t);o.stop(e.t+dur+.6);
+}
+
+function drone(root){
+  tone(root,7.4,"sawtooth",.032,0,-7);
+  tone(root*1.006,7.4,"sawtooth",.025,0,6);
+  tone(root*2,5.6,"triangle",.019,.5,0);
+  tone(root*3.01,3.2,"sine",.01,1.4,0);
+}
+
+function chant(root){
+  tone(root,3.8,"triangle",.021,0);
+  tone(root*1.5,3.5,"triangle",.013,.08);
+  tone(root*2.02,3.3,"sine",.009,.16);
+}
+
+function drum(delay=0,vol=.2){
+  if(!audioCtx||!musicOn)return;
+  const t=audioCtx.currentTime+delay;
+  const o=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+  o.type="sine";
+  o.frequency.setValueAtTime(122,t);
+  o.frequency.exponentialRampToValueAtTime(36,t+.28);
+  g.gain.setValueAtTime(vol,t);
+  g.gain.exponentialRampToValueAtTime(.0001,t+.58);
+  o.connect(g);g.connect(master);
+  o.start(t);o.stop(t+.62);
+
+  const buffer=audioCtx.createBuffer(1,Math.floor(audioCtx.sampleRate*.16),audioCtx.sampleRate);
+  const data=buffer.getChannelData(0);
+  for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,2);
+  const src=audioCtx.createBufferSource();src.buffer=buffer;
+  const f=audioCtx.createBiquadFilter();f.type="lowpass";f.frequency.value=430;
+  const ng=audioCtx.createGain();ng.gain.setValueAtTime(vol*.42,t);ng.gain.exponentialRampToValueAtTime(.0001,t+.16);
+  src.connect(f);f.connect(ng);ng.connect(master);src.start(t);
+}
+
+function bone(delay=0){
+  if(!audioCtx||!musicOn)return;
+  const t=audioCtx.currentTime+delay;
+  const b=audioCtx.createBuffer(1,Math.floor(audioCtx.sampleRate*.035),audioCtx.sampleRate);
+  const d=b.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);
+  const s=audioCtx.createBufferSource();s.buffer=b;
+  const f=audioCtx.createBiquadFilter();f.type="bandpass";f.frequency.value=1900;
+  const g=audioCtx.createGain();g.gain.value=.028;
+  s.connect(f);f.connect(g);g.connect(master);s.start(t);
+}
+
+function horn(){
+  tone(146.83,1.75,"sawtooth",.05,0,-8);
+  tone(220,1.55,"triangle",.031,.08,3);
+  tone(293.66,1.2,"sine",.019,.16);
+}
+
+function startMusic(){
+  stopMusic();
+  const roots=[55,61.74,73.42,82.41,65.41];
+  let step=0;
+  drone(55); chant(82.41); horn();
+  musicTimers.push(setInterval(()=>{
+    drone(roots[step%roots.length]);
+    if(step%2===0) chant(roots[(step+2)%roots.length]);
+    if(step%4===0) horn();
+    step++;
+  },6200));
+  musicTimers.push(setInterval(()=>{
+    drum(0,.17); drum(.52,.085); drum(1.18,.13); bone(.86); bone(1.58);
+  },2600));
+}
+
+function stopMusic(){
+  musicTimers.forEach(clearInterval);
+  musicTimers=[];
+}
+
+function toggleMusic(){
+  initAudio();
+  if(audioCtx.state==="suspended")audioCtx.resume();
+  musicOn=!musicOn;
+  if(musicOn)startMusic(); else stopMusic();
+  document.querySelectorAll("button").forEach(b=>{
+    if(b.innerText.includes("Music")) b.innerText=musicOn?"🎶 Music On":"🎵 Start Music";
+  });
+}
+
+function playDrumHit(){ if(musicOn) drum(0,.25); }
+function playHorn(){ if(musicOn) horn(); }
+
+showStart();
+</script>
+</body>
+</html>
